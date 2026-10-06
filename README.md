@@ -1,54 +1,180 @@
 # Employee Attrition Analysis
-Portfolio pembelajaran Data Analyst: Python, SQLite, visualisasi, dan logistic regression.
 
-## Tujuan
-Memahami proporsi attrition dan asosiasi karakteristik pekerjaan, lalu mengusulkan hipotesis retensi untuk diuji.
-Dataset fiktif, bukan tenaga kerja IBM sebenarnya. Hasil tidak membuktikan sebab-akibat.
+Project portfolio **Michael Munthe** untuk menganalisis employee attrition menggunakan Python, SQL, visualisasi, dan machine learning ringan.
 
-## Data
-Sumber: https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset
-Validasi menggunakan mirror: https://github.com/b1gvini/ibm-hr-analytics-attrition-dataset
-Raw: 1470 rows × 35 columns; cleaned: 1470 × 31.
-Drop EmployeeCount, Over18, StandardHours, EmployeeNumber. SHA256 CSV: `a5c31e38bd7fafc9bc333884eb181b06b41b8e5e488e8f7ccb27199fb3be7659`.
+📓 [Buka notebook di Google Colab](https://colab.research.google.com/github/michaelmunthe123/employee-attrition-analysis/blob/main/Employee_Attrition_Analysis_Final.ipynb)  
+📂 [Lihat repository](https://github.com/michaelmunthe123/employee-attrition-analysis)
 
-## Cara menjalankan
-1. Buka `notebooks/Employee_Attrition_Analysis_Final.ipynb` di Google Colab.
-2. Runtime Python → Run all → upload satu CSV/ZIP dari sumber; atau pilih opsi Google Drive pada cell input.
-3. Jalankan hingga export. Hasil dapat diunduh dalam ZIP pada cell terakhir.
-4. Untuk Jupyter lokal: install requirements, pilih INPUT_MODE='local', isi path relatif CSV.
+## Tujuan Project
 
-## Temuan dan rekomendasi
-### Temuan utama
-- **Keseluruhan:** 237/1470 observasi berlabel Yes (16.12%).
-- **Lembur:** Yes 30.53% (n=416, exits=127), dibanding No 10.44% (n=1054, exits=110). Selisih 20.09 pp; asosiasi belum mengendalikan semua faktor.
-- **Peran pekerjaan:** Sales Representative memiliki proporsi tertinggi di antara peran dengan n ≥ 50: 39.76% (n=83). Batas n ini membantu menghindari prioritas hanya karena kelompok sangat kecil.
-- **Masa kerja 0–2 tahun:** 29.82% (n=342). Bandingkan dengan kelompok lain pada tabel; jangan menyimpulkan efek onboarding tanpa data intervensi.
+Project ini bertujuan untuk:
 
-### Rencana tindak lanjut
-| Prioritas | Hipotesis / tindakan | Owner | Pengukuran setelah data riil tersedia |
-|---|---|---|---|
-| 1 | Audit beban kerja dan jadwal lembur; wawancara sukarela untuk memahami konteks | HRBP + manajer | Jam lembur, kepuasan, proporsi keluar dalam periode yang jelas |
-| 2 | Tinjau pengalaman kerja pada peran yang menonjol; bedakan workload, jenjang, dan kompensasi | HR analytics | Perbandingan segmen sebanding, ukuran sampel, interval ketidakpastian |
-| 3 | Uji dukungan onboarding/mentoring untuk masa kerja awal | Learning & Development | Retensi cohort 6/12 bulan dan feedback; tetapkan baseline sebelum pilot |
+- Memahami proporsi attrition dalam dataset.
+- Membandingkan karakteristik pekerjaan dan proporsi attrition antarsegmen.
+- Menyusun business insights serta rekomendasi untuk investigasi lebih lanjut.
+- Mempraktikkan SQL dan mengevaluasi model klasifikasi sederhana terhadap baseline.
 
-Jika layak, evaluasi pilot dengan kelompok pembanding dan desain yang disepakati; dataset saat ini tidak dapat menghitung ROI atau penurunan resign akibat program. Data demografi digunakan untuk audit representasi, bukan pembatasan kesempatan kerja.
+Semua temuan menunjukkan **asosiasi, bukan hubungan sebab-akibat**.
 
+## Dataset
 
-## Evaluasi model
-Split stratified 60/20/20, seed 42, 5-fold CV pada train, threshold dipilih pada validation.
-Baseline Dummy majority; preprocessing berada di pipeline. Ordinal di-one-hot.
-**Hasil test:** threshold validation 0.27, precision 0.287, recall 0.787, F1 0.420, ROC-AUC 0.835, AP 0.622 (prevalensi test 0.160).
+Dataset: [IBM HR Analytics Employee Attrition & Performance](https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset).
 
-Pada threshold terpilih terdapat **92 false positive dan 10 false negative**. Dibanding threshold 0.5, recall berubah dari 0.723 menjadi 0.787, tetapi precision dari 0.420 menjadi 0.287 dan F1 dari 0.531 menjadi 0.420. Jadi prioritas F2 pada validation tidak membuat semua metrik test lebih baik; keputusan operasional memerlukan biaya kesalahan dan kapasitas tindak lanjut yang nyata.
+Dataset ini **fiktif dan digunakan untuk pembelajaran**, bukan data tenaga kerja IBM yang sebenarnya.
 
-Recall yang lebih tinggi perlu dibaca bersama false positive. AP/ROC-AUC mengukur ranking, bukan dampak program retensi. Model belum layak dipakai untuk keputusan HR individual; threshold dan kalibrasi memerlukan validasi pada data nyata serta tujuan yang disepakati.
+| Informasi | Nilai |
+|---|---|
+| Jumlah observasi | 1.470 |
+| Jumlah kolom awal | 35 |
+| Jumlah kolom setelah cleaning | 31 |
+| Target | `Attrition`: Yes / No |
+| Label attrition Yes | 237 |
+| Proporsi attrition | 16,12% |
+
+Tidak ada periode pengamatan atau tanggal keluar. Karena itu, proporsi tersebut **bukan tingkat turnover tahunan**.
+
+Salinan publik yang digunakan untuk validasi tersedia di [repository dataset](https://github.com/b1gvini/ibm-hr-analytics-attrition-dataset).
+
+## Tools
+
+- **Python:** pandas, NumPy, Matplotlib, Seaborn, scikit-learn.
+- **SQL:** SQLite melalui database in-memory di notebook.
+- **Environment:** Google Colab atau Jupyter Notebook.
+
+## Struktur Repository
+
+```text
+employee-attrition-analysis/
+├── README.md
+├── Employee_Attrition_Analysis_Final.ipynb
+├── analysis.sql
+└── requirements.txt
+```
+
+| File | Fungsi |
+|---|---|
+| `Employee_Attrition_Analysis_Final.ipynb` | Analisis lengkap beserta penjelasan, visualisasi, dan hasil eksekusi |
+| `analysis.sql` | Query agregasi untuk overall attrition, departemen, lembur, dan masa kerja |
+| `requirements.txt` | Library untuk menjalankan analisis secara lokal |
+| `README.md` | Ringkasan project dan panduan penggunaan |
+
+## Alur Analisis
+
+1. Business Understanding.
+2. Setup dan input dataset.
+3. Data Understanding.
+4. Data Cleaning dan pemeriksaan kualitas.
+5. Exploratory Data Analysis dan visualisasi.
+6. SQL serta pengecekan hasil terhadap pandas.
+7. Business insights dan rekomendasi.
+8. Machine learning ringan dan evaluasi.
+9. Limitations dan conclusion.
+10. Export hasil dan persiapan GitHub.
+
+## Data Cleaning
+
+Data mentah dipertahankan dan cleaning dilakukan pada salinan.
+
+Pemeriksaan mencakup missing values, duplikat, keunikan ID, rentang kategori ordinal, serta konsistensi durasi kerja. Versi dataset yang digunakan tidak memiliki missing values atau duplikat seluruh baris.
+
+Empat kolom dibuang:
+
+- `EmployeeCount`, `Over18`, dan `StandardHours`: nilainya konstan.
+- `EmployeeNumber`: merupakan ID observasi.
+
+Data bersih memiliki **1.470 baris dan 31 kolom**. Nilai ekstrem tidak otomatis dihapus karena dapat merupakan observasi yang valid.
+
+## Temuan Utama
+
+| Segmen | Proporsi attrition | Jumlah observasi |
+|---|---:|---:|
+| Keseluruhan | 16,12% | 1.470 |
+| OverTime = Yes | 30,53% | 416 |
+| OverTime = No | 10,44% | 1.054 |
+| Sales Representative | 39,76% | 83 |
+| Masa kerja 0–2 tahun | 29,82% | 342 |
+
+Kelompok dengan status lembur memiliki proporsi attrition **20,09 poin persentase lebih tinggi** daripada kelompok tanpa lembur.
+
+Sales Representative memiliki proporsi tertinggi di antara peran pekerjaan dengan setidaknya 50 observasi. Temuan ini perlu dibaca bersama ukuran kelompok dan kemungkinan perbedaan karakteristik pekerjaan.
+
+Perbandingan tersebut belum mengendalikan semua faktor lain dan tidak membuktikan penyebab attrition.
+
+## Rekomendasi Bisnis
+
+- **Audit beban kerja dan jadwal lembur:** gunakan wawancara sukarela serta data operasional untuk memahami konteks.
+- **Tinjau pengalaman kerja pada peran yang menonjol:** investigasi workload, jenjang karier, dan kompensasi.
+- **Uji dukungan onboarding dan mentoring:** evaluasi melalui cohort bertanggal, baseline, serta kelompok pembanding jika memungkinkan.
+
+Rekomendasi ini merupakan hipotesis untuk diuji. Dataset belum dapat membuktikan efektivitas program atau menghitung ROI.
+
+## Machine Learning dan Evaluasi
+
+Model yang digunakan:
+
+- **DummyClassifier:** baseline yang selalu memprediksi kelas mayoritas.
+- **Logistic Regression:** model klasifikasi dengan `class_weight='balanced'`.
+
+Data dibagi secara stratified menjadi **60% training, 20% validation, dan 20% test**, dengan random seed 42. Preprocessing berada dalam pipeline; cross-validation dilakukan pada training, dan threshold dipilih dari validation menggunakan F2.
+
+| Model | Precision | Recall | F1 | ROC-AUC | Average Precision |
+|---|---:|---:|---:|---:|---:|
+| Dummy majority | 0,000 | 0,000 | 0,000 | 0,500 | 0,160 |
+| Logistic Regression, threshold 0,50 | 0,420 | 0,723 | 0,531 | 0,835 | 0,622 |
+| Logistic Regression, threshold 0,27 | 0,287 | 0,787 | 0,420 | 0,835 | 0,622 |
+
+Threshold 0,27 dipilih berdasarkan validation. Pada test, hasilnya mencakup **92 false positive dan 10 false negative**.
+
+Threshold tersebut meningkatkan recall dibanding 0,50, tetapi menurunkan precision dan F1. Pemilihan threshold operasional memerlukan informasi biaya kesalahan serta kapasitas tindak lanjut.
+
+Model ini merupakan latihan pembelajaran dan **belum layak digunakan untuk keputusan HR individual**.
+
+## Cara Menjalankan
+
+### Google Colab
+
+1. Klik [Buka notebook di Google Colab](https://colab.research.google.com/github/michaelmunthe123/employee-attrition-analysis/blob/main/Employee_Attrition_Analysis_Final.ipynb).
+2. Pilih **Runtime → Run all**.
+3. Saat diminta, upload satu CSV asli atau ZIP berisi satu CSV dari sumber dataset.
+4. Alternatifnya, pilih `INPUT_MODE = 'drive'` dan sesuaikan lokasi CSV di Google Drive.
+5. Jalankan sampai bagian export.
+
+Notebook menghasilkan cleaned CSV, tabel analisis, hasil evaluasi model, query SQL, dan metadata validasi. Untuk mengunduh ZIP hasil di Colab, ubah `DOWNLOAD_RESULTS = True` pada cell terakhir dan jalankan cell tersebut.
+
+### Jupyter Lokal
+
+Install library:
+
+```bash
+pip install -r requirements.txt
+```
+
+Buka notebook, ubah `INPUT_MODE = 'local'`, sesuaikan `LOCAL_CSV` dengan lokasi dataset, lalu jalankan cell secara berurutan.
+
+Query dalam `analysis.sql` menggunakan tabel `employees`, yang dibuat oleh bagian SQL di notebook.
+
+## Validasi
+
+- Seluruh 16 cell kode berhasil dieksekusi secara lokal tanpa error.
+- Hasil SQL diperiksa terhadap pandas.
+- Tujuh output grafik diperiksa secara visual.
+- Jalur input CSV dan ZIP diuji melalui simulasi upload.
+- Interaksi upload dan mount Google Drive langsung di Colab belum diuji.
 
 ## Limitations
-Tidak ada tanggal/horizon prediksi, data fiktif, sampel kecil, kemungkinan confounding/proxy.
-EDA melihat keseluruhan data; test hanya evaluasi internal pembelajaran.
-Belum ada validasi eksternal, fairness, kalibrasi atau pengukuran dampak bisnis.
 
-## Struktur
-`notebooks/`, `data/processed/`, `reports/`, `sql/`, dan `requirements.txt`.
-Pemilik: [isi nama]. Repository: [isi URL]. Tinjau ketentuan sumber sebelum membagikan CSV.
-Versi eksekusi: {"python": "3.12.14", "pandas": "3.0.6", "numpy": "2.5.3", "sklearn": "1.9.1"}.
+- Dataset fiktif dan berukuran terbatas; temuan bukan benchmark industri.
+- Tidak tersedia tanggal, horizon prediksi, atau alasan karyawan keluar.
+- Pola dapat dipengaruhi confounding, selection bias, dan banyaknya perbandingan.
+- EDA menggunakan keseluruhan data, sehingga evaluasi test merupakan evaluasi internal pembelajaran, bukan validasi eksternal yang sepenuhnya buta.
+- Waktu tersedianya fitur sebelum attrition belum dapat dikonfirmasi.
+- Belum dilakukan audit fairness, kalibrasi, drift, atau pengukuran dampak bisnis.
+
+## Kesimpulan
+
+Project ini menunjukkan alur analisis dari data mentah hingga insight, SQL, visualisasi, dan evaluasi model. Pola lembur, peran pekerjaan, dan masa kerja memberikan arah investigasi, tetapi pengujian hipotesis retensi memerlukan data riil bertanggal serta desain evaluasi yang sesuai.
+
+## Author
+
+**Michael Munthe**  
+[GitHub — michaelmunthe123](https://github.com/michaelmunthe123)
